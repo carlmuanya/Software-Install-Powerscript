@@ -1,0 +1,25 @@
+<#
+
+Software Install Powershell Script Example
+
+#>
+
+$servers = Get-Content "C:\temp\Servers.txt"
+
+$source = "c:\install"
+
+$dest = "c$"
+
+$testPath = "c:\install\AcroRd.exe"
+
+forEach ($server in $servers) {
+    if (test-Connection -Cn $computer -quiet) {
+        Copy-Item $source -Destination \\$computer\$dest -Recurse -Force
+
+        if (Test-Path -Path $testPath) {
+            Invoke-Command -ComputerName $server -ScriptBlock {powershell.exe c:\Install\AcroRd.exe /}
+            Write-Host -ForegroundColor Green "Installation successful on $server"
+        }
+    } else {
+        Write-Host -ForegroundColor Red "$server is not online, Install failed"
+    }
